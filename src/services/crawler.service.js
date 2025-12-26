@@ -23,9 +23,9 @@ class CrawlerService {
     const results = [];
     const baseUrl = new URL(startUrl);
     
-    // Fetch and parse robots.txt
+    // Fetch and parse robots.txt; if missing or invalid, allow all
     const robotsTxt = await this.fetchRobotsTxt(baseUrl.origin);
-    const robots = robotsParser(`${baseUrl.origin}/robots.txt`, robotsTxt);
+    const robots = this.createRobotsParser(baseUrl.origin, robotsTxt);
 
     discovered.add(startUrl);
 
@@ -181,6 +181,20 @@ class CrawlerService {
     } catch (error) {
       // If robots.txt doesn't exist, return empty (allow all)
       return '';
+    }
+  }
+
+  createRobotsParser(origin, robotsTxt) {
+    if (!robotsTxt || robotsTxt.trim() === '') {
+      // Allow all when robots.txt is missing or empty
+      return { isAllowed: () => true };
+    }
+
+    try {
+      return robotsParser(`${origin}/robots.txt`, robotsTxt);
+    } catch (error) {
+      // Fallback to allow all on parse errors
+      return { isAllowed: () => true };
     }
   }
 
