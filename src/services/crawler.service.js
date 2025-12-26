@@ -22,6 +22,7 @@ class CrawlerService {
     const queue = [{ url: startUrl, depth: 0 }];
     const results = [];
     const baseUrl = new URL(startUrl);
+    const baseHost = this.normalizeHost(baseUrl.hostname);
     
     // Fetch and parse robots.txt; if missing or invalid, allow all
     const robotsTxt = await this.fetchRobotsTxt(baseUrl.origin);
@@ -33,7 +34,7 @@ class CrawlerService {
       // Process URLs in batches (concurrency)
       const batch = queue.splice(0, concurrency);
       const promises = batch.map(item => 
-        this.processUrl(item, baseUrl, robots, crawlDepth, discovered, visited, results, progressCallback)
+        this.processUrl(item, baseUrl, baseHost, robots, crawlDepth, discovered, visited, results, progressCallback)
       );
 
       await Promise.allSettled(promises);
@@ -52,7 +53,7 @@ class CrawlerService {
     return results;
   }
 
-  async processUrl(item, baseUrl, robots, maxDepth, discovered, visited, results, progressCallback) {
+  async processUrl(item, baseUrl, baseHost, robots, maxDepth, discovered, visited, results, progressCallback) {
     const { url, depth } = item;
 
     if (visited.has(url) || depth > maxDepth) {
@@ -109,7 +110,7 @@ class CrawlerService {
 
       // Extract links
       const $ = load(response.data);
-      const links = this.extractLinks($, url, baseUrl.origin);
+      const links = this.extractLinks($, url, baseHost);
       
       for (const link of links) {
         if (!discovered.has(link)) {
@@ -128,9 +129,8 @@ class CrawlerService {
     }
   }
 
-  extractLinks($, currentUrl, baseOrigin) {
+  extractLinks($, currentUrl, baseHost) {
     const links = new Set();
-    const currentUrlObj = new URL(currentUrl);
 
     $('a[href]').each((_, element) => {
       try {
@@ -140,8 +140,8 @@ class CrawlerService {
         // Resolve relative URLs
         const absoluteUrl = new URL(href, currentUrl);
 
-        // Only include URLs from the same origin
-        if (absoluteUrl.origin !== baseOrigin) return;
+        // Only include URLs from the same host (protocol-insensitive, www-insensitive)
+        if (this.normalizeHost(absoluteUrl.hostname) !== baseHost) return;
 
         // Remove hash fragments
         absoluteUrl.hash = '';
@@ -157,6 +157,11 @@ class CrawlerService {
     });
 
     return Array.from(links);
+  }
+
+  normalizeHost(hostname) {
+    if (!hostname) return '';
+    return hostname.replace(/^www\./i, '').toLowerCase();
   }
 
   shouldSkipUrl(path) {
