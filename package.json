@@ -1,0 +1,38 @@
+{
+  "name": "xml-sitemap-generator",
+  "version": "1.0.0",
+  "description": "Self-hosted sitemap generator with real-time progress and caching",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node --test src/tests/**/*.test.js"
+  },
+  "keywords": [
+    "sitemap",
+    "crawler",
+    "xml",
+    "seo"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "ws": "^8.14.2",
+    "axios": "^1.6.2",
+    "cheerio": "^1.0.0-rc.12",
+    "redis": "^4.6.10",
+    "dotenv": "^16.3.1",
+    "bcrypt": "^5.1.1",
+    "jsonwebtoken": "^9.0.2",
+    "robots-parser": "^3.0.1",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XML Sitemap Generator</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>🗺️ XML Sitemap Generator</h1>
+            <p class="subtitle">Generate sitemaps with real-time crawling progress</p>
+        </header>
+
+        <!-- Login Form (shows if not authenticated) -->
+        <div id="loginSection" class="card">
+            <h2>Login</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Login</button>
+            </form>
+            <div id="loginError" class="error-message" style="display: none;"></div>
+        </div>
+
+        <!-- Main Application (shows after authentication) -->
+        <div id="appSection" style="display: none;">
+            <div class="user-info">
+                Logged in as: <span id="currentUser"></span>
+                <button id="logoutBtn" class="btn btn-secondary btn-sm">Logout</button>
+            </div>
+
+            <!-- Configuration Form -->
+            <div class="card">
+                <h2>Configuration</h2>
+                <form id="generateForm">
+                    <div class="form-group">
+                        <label for="url">Website URL *</label>
+                        <input type="url" id="url" placeholder="https://example.com" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="maxUrls">Max URLs</label>
+                            <input type="number" id="maxUrls" value="10000" min="1" max="50000">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="crawlDepth">Crawl Depth</label>
+                            <input type="number" id="crawlDepth" value="3" min="0" max="10">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="concurrency">Concurrency</label>
+                            <input type="number" id="concurrency" value="5" min="1" max="20">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" id="generateBtn">
+                        Generate Sitemap
+                    </button>
+                </form>
+            </div>
+
+            <!-- Progress Section -->
+            <div id="progressSection" class="card" style="display: none;">
+                <h2>Crawling Progress</h2>
+
+                <div class="status-badge" id="statusBadge">Initializing...</div>
+
+                <div class="progress-stats">
+                    <div class="stat">
+                        <span class="stat-label">URLs Discovered</span>
+                        <span class="stat-value" id="discoveredCount">0</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">URLs Crawled</span>
+                        <span class="stat-value" id="crawledCount">0</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">Current Depth</span>
+                        <span class="stat-value" id="currentDepth">0</span>
+                    </div>
+                </div>
+
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+
+                <div class="log-container">
+                    <h3>Activity Log</h3>
+                    <div id="logContent"></div>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div id="resultsSection" class="card" style="display: none;">
+                <h2>✅ Sitemap Generated Successfully</h2>
+
+                <div class="results-summary">
+                    <p><strong>Total URLs:</strong> <span id="totalUrls">0</span></p>
+                    <p><strong>Sitemaps Created:</strong> <span id="sitemapCount">0</span></p>
+                    <p><strong>Completed:</strong> <span id="completedTime">-</span></p>
+                </div>
+
+                <div id="downloadSection"></div>
+
+                <button id="newCrawlBtn" class="btn btn-secondary">
+                    Start New Crawl
+                </button>
+            </div>
+
+            <!-- Error Section -->
+            <div id="errorSection" class="card error" style="display: none;">
+                <h2>❌ Error</h2>
+                <p id="errorMessage"></p>
+                <button id="retryBtn" class="btn btn-primary">Try Again</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>XML Sitemap Generator | <a href="https://github.com" target="_blank">GitHub</a></p>
+    </footer>
+
+    <script src="/app.js"></script>
+</body>
+
+</html>
